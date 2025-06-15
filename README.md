@@ -1,6 +1,6 @@
 # Podslurp
 
-A command-line tool to fetch and display update history for podcast feeds using the Podping API. This tool helps podcast creators and listeners track when a podcast feed was updated, went live, or ended a live session.
+A command-line tool to fetch and display update history for podcast feeds using the Podping API. This tool helps podcast creators track when a podcast feed was updated, went live, or ended a live session.
 
 ## Features
 
@@ -26,7 +26,7 @@ source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 
 3. Install required packages:
 ```bash
-pip install requests pytz
+pip install -r requirements.txt
 ```
 
 ## Usage
