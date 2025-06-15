@@ -5,8 +5,19 @@ from datetime import datetime
 import urllib.parse
 import requests
 import sys
+import pytz
+import argparse
 
-def get_podpings(url):
+def get_podpings(url, timezone=None):
+    # If timezone is specified, get the timezone object
+    tz = None
+    if timezone:
+        try:
+            tz = pytz.timezone(timezone)
+        except pytz.exceptions.UnknownTimeZoneError:
+            print(f"Error: Unknown timezone '{timezone}'")
+            print("For a list of valid timezones, visit: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones")
+            return
     # Encode the URL for the API parameter
     encoded_url = urllib.parse.quote(url)
     
@@ -50,8 +61,17 @@ def get_podpings(url):
                     # Parse timestamp and explicitly mark it as UTC
                     timestamp = datetime.fromisoformat(item['timestamp'])
                     reason = item['reason']
-                    # Format timestamp in a more readable way while keeping UTC
-                    formatted_time = timestamp.strftime('%Y-%m-%d %H:%M UTC')
+                    # Convert to specified timezone if provided
+                    if tz:
+                        # Make timestamp aware of UTC
+                        utc_timestamp = timestamp.replace(tzinfo=pytz.UTC)
+                        # Convert to target timezone
+                        local_timestamp = utc_timestamp.astimezone(tz)
+                        # Format with timezone name
+                        formatted_time = local_timestamp.strftime('%Y-%m-%d %H:%M %Z')
+                    else:
+                        # Keep UTC if no timezone specified
+                        formatted_time = timestamp.strftime('%Y-%m-%d %H:%M UTC')
                     print(f"{formatted_time} | {reason}")
                 except ValueError:
                     continue
@@ -66,9 +86,9 @@ def get_podpings(url):
         print(f"Error parsing JSON response: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python podping.py <url>")
-        sys.exit(1)
-    
-    url = sys.argv[1]
-    get_podpings(url)
+    parser = argparse.ArgumentParser(description='Fetch podping updates for a podcast feed URL')
+    parser.add_argument('url', help='The podcast feed URL to check')
+    parser.add_argument('--tz', '-t', help='Convert timestamps to this timezone (e.g., US/Pacific, Europe/London)')
+    args = parser.parse_args()
+
+    get_podpings(args.url, args.tz)
