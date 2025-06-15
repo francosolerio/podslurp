@@ -47,9 +47,12 @@ def get_podpings(url):
                 if 'timestamp' not in item or 'reason' not in item:
                     continue
                 try:
+                    # Parse timestamp and explicitly mark it as UTC
                     timestamp = datetime.fromisoformat(item['timestamp'])
                     reason = item['reason']
-                    print(f"{timestamp.strftime('%Y-%m-%d %H:%M:%S')} | {reason}")
+                    # Format timestamp in a more readable way while keeping UTC
+                    formatted_time = timestamp.strftime('%Y-%m-%d %H:%M UTC')
+                    print(f"{formatted_time} | {reason}")
                 except ValueError:
                     continue
 
