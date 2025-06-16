@@ -14,7 +14,7 @@ A command-line tool to fetch and display update history for podcast feeds using 
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/podslurp.git
+git clone https://github.com/francosolerio/podslurp.git
 cd podslurp
 ```
 
